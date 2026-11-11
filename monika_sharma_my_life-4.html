@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monika Sharma | My Life</title>
+<style>
+:root{--pink:#ff4f91;--deep:#9b285e;--cream:#fff7fb;--text:#482638}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:var(--text);background:linear-gradient(135deg,#ffe2ef,#fff8fc 55%,#fce4ff)}
+header{text-align:center;padding:42px 16px 30px;background:linear-gradient(135deg,#ff78ad,#b75ce0);color:white;border-radius:0 0 32px 32px}
+header h1{font-size:clamp(2rem,8vw,3.3rem);margin:8px 0}
+header p{margin:8px 0;font-size:1.05rem}
+.heart{font-size:2rem}
+main{max-width:950px;margin:auto;padding:20px 14px 50px}
+.card{background:#ffffffdf;border:1px solid #ffd1e4;border-radius:22px;padding:20px;margin:16px 0;box-shadow:0 8px 25px #a82e5b12}
+h2{color:var(--deep);margin-top:0}
+button,.button{border:0;border-radius:14px;padding:11px 16px;background:var(--pink);color:white;font-weight:bold;cursor:pointer;display:inline-block}
+button:hover,.button:hover{filter:brightness(.95)}
+input[type=text],textarea{width:100%;padding:12px;border:1px solid #efb6d0;border-radius:12px;margin:7px 0 12px;font:inherit;background:#fffafd}
+textarea{min-height:80px;resize:vertical}
+input[type=file]{max-width:100%;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.media-item{background:#fff0f7;border-radius:14px;padding:8px;overflow:hidden}
+.media-item img,.media-item video{width:100%;max-height:260px;object-fit:contain;border-radius:10px}
+.caption{font-size:.9rem;overflow-wrap:anywhere}
+.stickers{font-size:2rem;line-height:1.8;word-break:break-word}
+.shayari{background:#fff0f7;border-left:4px solid var(--pink);padding:14px;border-radius:12px;margin:10px 0;line-height:1.7}
+.idrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.idrow a{color:var(--deep);overflow-wrap:anywhere}
+footer{text-align:center;padding:20px;color:#9b4770}
+.small{font-size:.88rem;color:#84536b}
+</style>
+</head>
+<body>
+<header>
+  <div class="heart">💗 🌸 💗</div>
+  <h1>Monika Sharma</h1>
+  <p>My Life 🥰</p>
+  <div>✨ यादों की एक छोटी-सी प्यारी दुनिया ✨</div>
+</header>
+<main>
+  <section class="card">
+    <h2>📸 मेरी Photos</h2>
+    <p class="small">अपने फोन से फोटो चुनकर यहाँ जोड़ें।</p>
+    <input id="photoInput" type="file" accept="image/*" multiple>
+    <div id="photos" class="grid"></div>
+  </section>
+
+  <section class="card">
+    <h2>🎬 मेरी Videos</h2>
+    <p class="small">अपने फोन से वीडियो चुनकर यहाँ चलाएँ।</p>
+    <input id="videoInput" type="file" accept="video/*" multiple>
+    <div id="videos" class="grid"></div>
+  </section>
+
+  <section class="card">
+    <h2>🥰 प्यारे Stickers</h2>
+    <div class="stickers" id="stickerWall">💖 🥰 🌹 🦋 ✨ 💕 😘 🌸 💫 🧿 ❤️</div>
+    <input id="stickerInput" type="text" placeholder="अपना emoji/sticker लिखें, जैसे 🐻‍❄️">
+    <button onclick="addSticker()">Sticker जोड़ें</button>
+  </section>
+
+  <section class="card">
+    <h2>📝 मेरी Shayari</h2>
+    <div id="shayariList">
+      <div class="shayari">तेरी मुस्कान से रोशन मेरी हर शाम रहे,<br>तेरे चेहरे पर हमेशा खुशियों का नाम रहे। 💗</div>
+      <div class="shayari">कुछ यादें दिल के बहुत करीब होती हैं,<br>कुछ लोग जिंदगी की सबसे खूबसूरत तस्वीर होते हैं। 🌹</div>
+    </div>
+    <textarea id="shayariInput" placeholder="अपनी शायरी यहाँ लिखें..."></textarea>
+    <button onclick="addShayari()">शायरी जोड़ें</button>
+  </section>
+
+  <section class="card">
+    <h2>🆔 मेरी Social ID</h2>
+    <p class="small">अपनी Instagram या दूसरी प्रोफाइल का नाम/लिंक जोड़ें।</p>
+    <input id="idName" type="text" placeholder="जैसे Instagram">
+    <input id="idLink" type="text" placeholder="@username या https://...">
+    <button onclick="addId()">ID जोड़ें</button>
+    <div id="idList"></div>
+  </section>
+</main>
+<footer>बनाई गई प्यार और यादों के नाम 💞</footer>
+<script>
+function addMedia(inputId, targetId, type){
+  document.getElementById(inputId).addEventListener('change', function(){
+    const target=document.getElementById(targetId);
+    [...this.files].forEach(file=>{
+      const url=URL.createObjectURL(file);
+      const box=document.createElement('div'); box.className='media-item';
+      const media=document.createElement(type);
+      media.src=url;
+      if(type==='video'){media.controls=true;media.playsInline=true}
+      else {media.alt=file.name}
+      const caption=document.createElement('div');caption.className='caption';caption.textContent=file.name;
+      box.append(media,caption);target.append(box);
+    });
+    this.value='';
+  });
+}
+addMedia('photoInput','photos','img');
+addMedia('videoInput','videos','video');
+function addSticker(){
+  const input=document.getElementById('stickerInput');
+  if(!input.value.trim())return;
+  document.getElementById('stickerWall').textContent += ' ' + input.value.trim();
+  input.value='';
+}
+function addShayari(){
+  const input=document.getElementById('shayariInput');
+  if(!input.value.trim())return;
+  const div=document.createElement('div');div.className='shayari';
+  div.textContent=input.value.trim();
+  document.getElementById('shayariList').append(div);input.value='';
+}
+function addId(){
+  const name=document.getElementById('idName').value.trim();
+  const value=document.getElementById('idLink').value.trim();
+  if(!name||!value)return;
+  const row=document.createElement('p');row.className='idrow';
+  const label=document.createElement('strong');label.textContent=name+': ';
+  const link=document.createElement('a');
+  link.textContent=value;
+  if(/^https?:\/\//i.test(value)){link.href=value;link.target='_blank';link.rel='noopener noreferrer'}
+  else {link.href='#';link.addEventListener('click',e=>e.preventDefault())}
+  row.append(label,link);document.getElementById('idList').append(row);
+  document.getElementById('idName').value='';
+  document.getElementById('idLink').value='';
+}
+</script>
+</body>
+</html>
